@@ -1,0 +1,39 @@
+.wpsleh-row-template, .wpsleh-store-closed, .wpsleh-period-template, .wpsleh-custom-day-template {
+    display: none;
+}
+.wpsleh-store-hours {
+    width: 100%;
+    border: 1px solid rgba(0,0,0, 0.5);
+}
+.wpsleh-store-hours tr {
+    border-bottom: 1px solid #000;
+}
+.wpsleh-row:nth-child(odd) {
+    background: rgba(0, 0, 0, 0.12);
+}
+.wpsleh-store-closed {
+    width: 100%;
+    text-align: center;
+}
+.wpsleh-store-hours tr td:nth-child(3) {
+    text-align: center;
+}
+
+.wpsleh-add-period, .wpsleh-remove-period, .wpsleh-add-custom-row {
+    display: inline-block;
+}
+
+.wpsleh-row-seperator {
+    padding-left: 15px;
+}
+.ib {
+    display: inline-block;
+}
+
+.wpsleh-remove-custom-row, .wpsleh-remove-period {
+    color: #a00;
+}
+
+.post-item table.wpsl-expanded-hours td:first-child {
+    padding-left: 0;
+}

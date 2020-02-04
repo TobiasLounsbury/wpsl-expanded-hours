@@ -1,5 +1,6 @@
 <?php
 
+require_once("wpsl-expanded-hours-utils.php");
 
 
 /**
@@ -47,7 +48,7 @@ function wpsleh_import_from_old_hours() {
       //or '09:45,19:00' if the listing was in 24 Hour format
 
       //Initialize the day as an empty array
-      $newData[WPSLEH_DAY_LOOKUP[$day]] = [];
+      $newData[WPSLEH_DAY_LOOKUP[$day]] = array("periods" => []);
 
       //Loop through each entry for this day
       foreach ($hours as $hourString) {
@@ -55,7 +56,7 @@ function wpsleh_import_from_old_hours() {
         list($oldOpen, $oldClose) = explode(",", $hourString);
 
         //Parse each time into the new number format
-        $newData[WPSLEH_DAY_LOOKUP[$day]][] = [
+        $newData[WPSLEH_DAY_LOOKUP[$day]]['periods'][] = [
             "open" => wpsleh_parse_old_time_string($oldOpen),
             "close" => wpsleh_parse_old_time_string($oldClose)
         ];
@@ -86,8 +87,9 @@ function wpsleh_export_to_old_hours() {
       $format = $expandedData['config']['format'];
       foreach(range(0,6) as $dotw) {
         $oldHours[WPSLEH_DAY_LOOKUP[$dotw]] = array();
-        if(!empty($expandedData[$dotw])) {
-          foreach($expandedData[$dotw] as $period) {
+
+        if(array_key_exists("periods", $expandedData[$dotw]) && !empty($expandedData[$dotw]['periods'])) {
+          foreach($expandedData[$dotw]['periods'] as $period) {
             $oldHours[WPSLEH_DAY_LOOKUP[$dotw]][] = wpsleh_convert_minutes_to_string($period['open'], $format). ", ". wpsleh_convert_minutes_to_string($period['close'], $format);
           }
         }
@@ -121,22 +123,3 @@ function wpsleh_parse_old_time_string($hourString) {
 }
 
 
-/**
- * Helper function that takes a number of minutes and converts
- * it into a standard time string
- *
- * e.g. 600 => 10:00 AM
- *
- * @param $minutes
- * @param $format
- * @return string
- */
-function wpsleh_convert_minutes_to_string($minutes, $format) {
-  $m = $minutes % 60;
-  $m = ($m == 0) ? "00" : $m;
-  $h = floor( $minutes / 60);
-  $ampm = ($format == 24) ? "" : ($h > 12) ? " PM" : " AM";
-  $h = (($format == 12) && ($h > 12)) ? $h - 12 : $h;
-  $h = (($format == 12) && ($h == 0)) ? 12 : $h;
-  return "{$h}:{$m}{$ampm}";
-}
