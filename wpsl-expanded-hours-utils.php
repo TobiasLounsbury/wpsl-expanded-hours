@@ -75,3 +75,44 @@ function wpsleh_render_hours($hours) {
   $output .= "</table>";
   return $output;
 }
+
+
+/**
+ * Returns a boolean indicating if the requested location is currently
+ * open based on their expanded hours
+ *
+ * @param $store array|int Either a store object or a post id
+ * @return boolean indicating if the location is currently open
+ */
+function wpsleh_store_is_open($store) {
+
+  try {
+    //If we can't load the data return false;
+    if (is_int($store)) {
+      $store = array("expanded_hours" => json_decode(get_post_meta($store, "wpsl_expanded_hours", true), true));
+    }
+
+    //If we don't have data, return false;
+    if(!array_key_exists("expanded_hours", $store)) {
+      return false;
+    }
+  } catch (Exception $e) {
+    return false;
+  }
+
+  //todo: Handle timezones
+  $custom = date("Y-m-d");
+  $dotw = (array_key_exists($custom, $store['expanded_hours'])) ? $custom : date("w");
+  $periods = $store['expanded_hours'][$dotw]['periods'];
+  if (!empty($periods)) {
+    $minutes = intval(date("G")) * 60 + (intval(date("i")));
+    foreach ($periods as $period) {
+      //todo: Walk through the hours and check to see if the store is open
+      if($period['open'] <= $minutes && $period['close'] >= $minutes) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}

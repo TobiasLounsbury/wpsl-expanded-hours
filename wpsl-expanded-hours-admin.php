@@ -1,6 +1,10 @@
 <?php
 
-
+/**
+ * Render the admin interface for editing expanded hours.
+ *
+ * @param $args
+ */
 function wpsleh_build_expanded_hours_admin_form($args) {
   global $post;
 
@@ -72,4 +76,11 @@ function wpsleh_build_expanded_hours_admin_form($args) {
         </div>
     </div>
   <?php
+}
+
+/**
+ * Render the settings tab for Expanded Hours
+ */
+function wpsleh_build_expanded_hours_settings_form() {
+
 }
