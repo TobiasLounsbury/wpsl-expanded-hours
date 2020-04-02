@@ -26,8 +26,8 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 //Define the current version number
-define( 'WPSL_EXPANDED_HOURS_VERSION', '1.0.0' );
-define("WPSLEH_DAY_LOOKUP", [
+define( 'WPSL_EXPANDED_HOURS_VERSION', '1.0.1' );
+const WPSLEH_DAY_LOOKUP = [
     0 => "sunday",
     1 => "monday",
     2 => "tuesday",
@@ -42,11 +42,14 @@ define("WPSLEH_DAY_LOOKUP", [
     "thursday"  => 4,
     "friday"    => 5,
     "saturday"  => 6,
-]);
+];
 
 //Register Activation/deactivation hooks
 register_activation_hook( __FILE__, 'wpsl_expanded_hours_plugin_activate' );
-register_deactivation_hook( __FILE__, 'wpsl_expanded_hours_plugin_deactivate' );
+
+
+//Settings hooks
+add_action( 'admin_init', 'wpsl_expanded_hours_hook_admin_init' );
 
 //Add a custom "metabox" that will ed up being rendered on the admin side as the
 //expanded hours interface
@@ -74,21 +77,15 @@ add_shortcode( 'wpsl_hours', 'wpsl_expanded_hours_show_opening_hours');
 
 add_filter( 'wp_footer', 'wpsl_expanded_hours_add_scripts');
 
+
 /**
  * Handle Activation tasks
  */
 function wpsl_expanded_hours_plugin_activate() {
-  require_once("wpsl-expanded-hours-install.php");
-  wpsleh_import_from_old_hours();
-}
-
-
-/**
- * Handle Deactivation Tasks
- */
-function wpsl_expanded_hours_plugin_deactivate() {
-  require_once("wpsl-expanded-hours-install.php");
-  wpsleh_export_to_old_hours();
+  if(!get_option('mainlib_magellan_locations_path')) {
+    require_once("wpsl-expanded-hours-install.php");
+    wpsleh_first_install();
+  }
 }
 
 
@@ -103,6 +100,62 @@ function wpsl_expanded_hours_wpsl_custom_meta_box_fields($meta) {
   unset($meta['Opening Hours']['hours']);
   $meta['Opening Hours']['expanded_hours'] = array("label" => "Hours", "type" => "expanded_hours");
   return $meta;
+}
+
+
+/**
+ *
+ */
+function wpsl_expanded_hours_hook_admin_init() {
+  global $user;
+
+  //Register fields for Settings page
+  add_option( 'wpsleh_installed', false);
+  register_setting( 'wpsl_expanded_hours_option_group', 'wpsleh_installed');
+
+  add_option( 'wpsleh_default_hours', '');
+  register_setting( 'wpsl_expanded_hours_option_group', 'wpsleh_default_hours');
+
+  add_option( 'wpsleh_injection_point', '#wpsl-category');
+  register_setting( 'wpsl_expanded_hours_option_group', 'wpsleh_injection_point');
+
+  //Handle Closed Data Export
+  if ( array_key_exists( 'action', $_REQUEST ) && $_REQUEST['action'] == 'wpsleh_all_data_export') {
+    //todo: Check to make sure the user has permission to export wpsl data
+    require_once("wpsl-expanded-hours-install.php");
+    $pretty = (array_key_exists("wpsleh_export_pretty", $_REQUEST)) ? intval($_REQUEST['wpsleh_export_pretty']) : false;
+    wpsleh_export_all_store_data($pretty);
+  }
+
+  if ( array_key_exists( 'action', $_REQUEST ) && $_REQUEST['action'] == 'wpsleh_import_from_old_data') {
+    //todo: Check to make sure the user has permission to export wpsl data
+    require_once("wpsl-expanded-hours-install.php");
+    wpsleh_import_from_old_hours();
+    // After form save function ends do:
+    wp_redirect("edit.php?post_type=wpsl_stores&page=wpsl_settings&tab=expanded_hours");
+    exit;
+  }
+
+  if ( array_key_exists( 'action', $_REQUEST ) && $_REQUEST['action'] == 'wpsleh_save_to_old_data') {
+    //todo: Check to make sure the user has permission to export wpsl data
+    require_once("wpsl-expanded-hours-install.php");
+    wpsleh_export_to_old_hours();
+    // After form save function ends do:
+    wp_redirect("edit.php?post_type=wpsl_stores&page=wpsl_settings&tab=expanded_hours");
+    exit;
+  }
+
+  if ( array_key_exists( 'action', $_REQUEST ) && $_REQUEST['action'] == 'wpsleh_all_locations_import_data') {
+    //todo: Check to make sure the user has permission to export wpsl data
+    require_once("wpsl-expanded-hours-install.php");
+    if (array_key_exists("wpsleh_import_json_input", $_FILES)) {
+      $json = file_get_contents($_FILES['wpsleh_import_json_input']['tmp_name']);
+      wpsleh_import_all_store_data($json);
+    }
+    // After form save function ends do:
+    wp_redirect("edit.php?post_type=wpsl_stores&page=wpsl_settings&tab=expanded_hours");
+    exit;
+  }
 }
 
 
@@ -154,15 +207,27 @@ function wpsl_expanded_hours_frontend_meta_fields($store_meta) {
   return $store_meta;
 }
 
+
+/**
+ * Add settings tab
+ *
+ * @param $tabs
+ * @return mixed
+ */
 function wpsl_expanded_hours_add_custom_settings_tab($tabs) {
   $tabs['expanded_hours'] = "Expanded Hours";
   return $tabs;
 }
 
+
+/**
+ * Render the custom settings tab
+ *
+ * @param $tab
+ */
 function wpsl_expanded_hours_render_custom_settings_tab($tab) {
   if ($tab == "expanded_hours") {
-    require_once("wpsl-expanded-hours-admin.php");
-    wpsleh_build_expanded_hours_settings_form();
+    include(__DIR__."/templates/wpsl-expanded-hours-settings.php");
   }
 }
 
@@ -191,6 +256,7 @@ function wpsl_expanded_hours_filter_store_data($storeData) {
   }
   return $storeData;
 }
+
 
 
 /**

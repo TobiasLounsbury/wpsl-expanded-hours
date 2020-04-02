@@ -116,3 +116,36 @@ function wpsleh_store_is_open($store) {
 
   return false;
 }
+
+function wpsleh_add_error($msg) {
+  wpsleh_add_message($msg, "error");
+}
+
+function wpsleh_add_warning($msg) {
+  wpsleh_add_message($msg, "warning");
+}
+
+function wpsleh_add_success($msg) {
+  wpsleh_add_message($msg, "success");
+}
+
+function wpsleh_add_message($msg, $class) {
+  if(!array_key_exists("wpsleh_messages", $GLOBALS)) {
+    $GLOBALS['wpsleh_messages'] = array();
+  }
+  $GLOBALS['wpsleh_messages'][] = array("text" => $msg, "class" => $class);
+}
+
+function wpsleh_clear_messages() {
+  $_GLOBAL['wpsleh_messages'] = array();
+}
+
+function wpsleh_render_messages() {
+  if(array_key_exists("wpsleh_messages", $GLOBALS)) {
+    foreach ($GLOBALS['wpsleh_messages'] as $msg) {
+      echo "<div class='notice notice-${msg['class']} is-dismissible'><p><strong>${msg['text']}</strong></p><button type='button' class='notice-dismiss'><span class='screen-reader-text'>Dismiss this notice.</span></button></div>";
+    }
+    wpsleh_clear_messages();
+  }
+}
+

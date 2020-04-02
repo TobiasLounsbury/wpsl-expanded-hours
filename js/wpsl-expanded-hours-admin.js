@@ -148,7 +148,11 @@ jQuery( document ).ready( function( $ ) {
       $day.find(".wpsleh-opening-day").html(dotw[i].charAt(0).toUpperCase() + dotw[i].substring(1));
       $day.find(".wpsleh-opening-day").append("<input type='hidden' class='wpsleh-row-day' value='" + i + "' />");
 
-      loadPeriods(data[i].periods, $day);
+      if(data.hasOwnProperty(i) && data[i].hasOwnProperty("periods")) {
+        loadPeriods(data[i].periods, $day);
+      } else {
+        loadPeriods({}, $day);
+      }
 
       $(this).find(".wpsleh-row-seperator").before($day);
     }

@@ -77,10 +77,3 @@ function wpsleh_build_expanded_hours_admin_form($args) {
     </div>
   <?php
 }
-
-/**
- * Render the settings tab for Expanded Hours
- */
-function wpsleh_build_expanded_hours_settings_form() {
-
-}
