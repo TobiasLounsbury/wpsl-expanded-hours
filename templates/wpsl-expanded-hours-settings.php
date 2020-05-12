@@ -10,7 +10,30 @@
   ?>
 
 
-
+    <form method="post" action="options.php">
+        <div class="postbox-container">
+            <div class="metabox-holder">
+                <div class="postbox">
+                    <h3 class="hndle"><span>Expanded Hours Settings</span></h3>
+                    <div class="inside">
+                        <?php settings_fields( 'wpsl_expanded_hours_option_group' ); ?>
+                        <p>
+                            <label for="wpsleh_enable_open_now"><strong>Enable open now search widget:</strong></label>
+                            <input type="checkbox" id="wpsleh_enable_open_now" name="wpsleh_enable_open_now" value="1" <?php echo (get_option('wpsleh_enable_open_now') == 1) ? "checked" : ""; ?> />
+                        </p>
+                        <hr>
+                        <p>
+                            <label for="wpsleh_open_now_widget_target"><strong>Where to Place the Open Now Widget:</strong></label>
+                        </p>
+                        <p>
+                            <input type="text" id="wpsleh_open_now_widget_target" name="wpsleh_open_now_widget_target" value="<?php echo get_option('wpsleh_open_now_widget_target', '#wpsl-category'); ?>" />
+                        </p>
+                        <?php  submit_button(); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 
 
 

@@ -44,6 +44,13 @@ const WPSLEH_DAY_LOOKUP = [
     "saturday"  => 6,
 ];
 
+const WPSLEH_DEFAULT_SETTINGS = [
+    "wpsleh_installed"    => false,
+    "wpsleh_default_hours"    => '',
+    "wpsleh_enable_open_now"   => "1",
+    "wpsleh_open_now_widget_target" => '#wpsl-category',
+];
+
 //Register Activation/deactivation hooks
 register_activation_hook( __FILE__, 'wpsl_expanded_hours_plugin_activate' );
 
@@ -109,15 +116,13 @@ function wpsl_expanded_hours_wpsl_custom_meta_box_fields($meta) {
 function wpsl_expanded_hours_hook_admin_init() {
   global $user;
 
-  //Register fields for Settings page
-  add_option( 'wpsleh_installed', false);
-  register_setting( 'wpsl_expanded_hours_option_group', 'wpsleh_installed');
+    //Register fields for Settings page
+    foreach(WPSLEH_DEFAULT_SETTINGS as $key => $default) {
+        add_option($key, $default);
+        register_setting( 'wpsl_expanded_hours_option_group', $key);
+    }
 
-  add_option( 'wpsleh_default_hours', '');
-  register_setting( 'wpsl_expanded_hours_option_group', 'wpsleh_default_hours');
 
-  add_option( 'wpsleh_injection_point', '#wpsl-category');
-  register_setting( 'wpsl_expanded_hours_option_group', 'wpsleh_injection_point');
 
   //Handle Closed Data Export
   if ( array_key_exists( 'action', $_REQUEST ) && $_REQUEST['action'] == 'wpsleh_all_data_export') {
@@ -235,8 +240,33 @@ function wpsl_expanded_hours_render_custom_settings_tab($tab) {
  * Add css and js to front-end
  */
 function wpsl_expanded_hours_add_scripts() {
-  wp_enqueue_script("wpsl_expanded_hours_js", plugin_dir_url(__FILE__)."js/wpsl-expanded-hours.js");
-  wp_enqueue_style("wpsl_expanded_hours_css",  plugin_dir_url(__FILE__)."css/wpsl-expanded-hours.css");
+    wpsl_expanded_hours_export_settings();
+    wp_enqueue_script("wpsl_expanded_hours_js", plugin_dir_url(__FILE__)."js/wpsl-expanded-hours.js");
+    wp_enqueue_style("wpsl_expanded_hours_css",  plugin_dir_url(__FILE__)."css/wpsl-expanded-hours.css");
+}
+
+
+/**
+ * Generate a javascript object with all the settings
+ */
+function wpsl_expanded_hours_export_settings() {
+    echo "<script>\n";
+    echo "window.WPSLEH = window.WPSLEH || {};\n";
+    echo "window.WPSLEH.settings =". json_encode(wpsl_expanded_hours_all_settings()) . ";";
+    echo "\n</script>";
+}
+
+
+/**
+ * Return all the settings
+ * @return array
+ */
+function wpsl_expanded_hours_all_settings() {
+    $settings = [];
+    foreach(WPSLEH_DEFAULT_SETTINGS as $key => $default) {
+        $settings[$key] = get_option($key, $default);
+    }
+    return $settings;
 }
 
 
