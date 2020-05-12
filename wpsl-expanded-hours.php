@@ -196,6 +196,7 @@ function wpsl_expanded_hours_custom_store_meta($store_meta, $store_id) {
   require_once("wpsl-expanded-hours-utils.php");
   $store_meta['expanded_hours'] = json_decode(get_post_meta($store_id, "wpsl_expanded_hours", true), true);
   $store_meta['hours'] = wpsleh_render_hours($store_meta['expanded_hours']);
+  $store_meta['special_hours_today'] = array_key_exists(date("Y-m-d"), $store_meta['expanded_hours']);
   return $store_meta;
 }
 
