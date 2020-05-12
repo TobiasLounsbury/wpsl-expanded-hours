@@ -38,14 +38,14 @@ jQuery( document ).ready( function( $ ) {
       let h = Math.floor(minutes / 60);
       let m = minutes % 60;
       m = (m == 0) ? "00" : m;
-      let ampm = (h > 12) ? "PM" : "AM";
+      let ampm = (h >= 12) ? "PM" : "AM";
       h = (h > 12) ? h - 12 : h;
       h = (h == 0) ? 12 : h;
       cache12[minutes] =  h + ":" + m + " " + ampm;
     }
     return cache12[minutes];
   };
-
+  
 
   /**
    * Re-serialize the form data into a json string and stuff it into the target
