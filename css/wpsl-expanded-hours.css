@@ -8,6 +8,12 @@
 .wpsleh-store-hours tr {
     border-bottom: 1px solid #000;
 }
+table.wpsl-opening-hours .wpsleh-day-row td {
+    padding-top: 10px;
+}
+table.wpsl-opening-hours .wpsleh-special-hours-row td {
+    font-size: 0.8em;
+}
 .wpsleh-row:nth-child(odd) {
     background: rgba(0, 0, 0, 0.12);
 }
@@ -28,6 +34,10 @@
 }
 .ib {
     display: inline-block;
+}
+
+.wpsleh-today-bold {
+    font-weight: bold;
 }
 
 .wpsleh-remove-custom-row, .wpsleh-remove-period {

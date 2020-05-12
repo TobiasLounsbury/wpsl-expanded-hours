@@ -48,6 +48,7 @@ const WPSLEH_DEFAULT_SETTINGS = [
     "wpsleh_installed"    => false,
     "wpsleh_default_hours"    => '',
     "wpsleh_enable_open_now"   => "1",
+    "wpsleh_bold_today"   => "1",
     "wpsleh_open_now_widget_target" => '#wpsl-category',
 ];
 

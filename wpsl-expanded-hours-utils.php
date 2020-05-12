@@ -31,7 +31,8 @@ function wpsleh_render_hours($hours) {
 
   $format = (array_key_exists("config", $hours) && array_key_exists("format", $hours['config'])) ? $hours['config']['format'] : 12;
 
-  //todo: Add option for bolding today
+  //Add option for bolding today
+  $todayClass = (get_option('wpsleh_bold_today') == "1") ? "wpsleh-today wpsleh-today-bold" : "wpsleh-today";
 
   $output = "<table role='presentation' class='wpsl-opening-hours wpsl-expanded-hours'>";
 
@@ -41,31 +42,24 @@ function wpsleh_render_hours($hours) {
 
     $dotw = date("w", $day);
     $date = date("Y-m-d", $day);
+    $special = (array_key_exists($date, $hours));
+    $data = (array_key_exists($date, $hours)) ? $hours[$date] : $hours[$dotw];
+    $today = (date("w") == $dotw) ? $todayClass : "";
 
-    $so = (array_key_exists($date, $hours)) ? "<del>" : "";
-    $sc = (array_key_exists($date, $hours)) ? "</del>" : "";
+    $output .= "<tr class='wpsleh-day-row {$today}'><td>". ucfirst(WPSLEH_DAY_LOOKUP[$dotw]) ."</td><td>";
 
-    $output .= "<tr><td>$so". ucfirst(WPSLEH_DAY_LOOKUP[$dotw]) ."</td><td>";
-    if(empty($hours[$dotw]['periods'])) {
-      $output .= "{$so}Closed{$sc}";
+
+    if(empty($data['periods'])) {
+      $output .= "Closed";
     } else {
-      foreach($hours[$dotw]['periods'] as $period) {
-        $output .= "<time>$so" . wpsleh_convert_minutes_to_string($period['open'], $format) . " - " . wpsleh_convert_minutes_to_string($period['close'], $format) . "$sc</time>";
+      foreach($data['periods'] as $period) {
+        $output .= "<time>" . wpsleh_convert_minutes_to_string($period['open'], $format) . " - " . wpsleh_convert_minutes_to_string($period['close'], $format) . "</time>";
       }
     }
     $output .= "</td></tr>";
 
-
-    if (array_key_exists($date, $hours)) {
-      $output  .= "<tr><td>". $hours[$date]['label'] ."</td><td>";
-      if(empty($hours[$date]['periods'])) {
-        $output .= "Closed";
-      } else {
-        foreach($hours[$date]['periods'] as $period) {
-          $output .= "<time>" . wpsleh_convert_minutes_to_string($period['open'], $format) . " - " . wpsleh_convert_minutes_to_string($period['close'], $format) . "</time>";
-        }
-      }
-      $output .= "</td></tr>";
+    if ($special) {
+      $output  .= "<tr class='wpsleh-special-hours-row {$today}'><td>". $hours[$date]['label'] ."</td><td>(Special Hours)</td></tr>";
     }
 
     $day += 86400; //Add a day
