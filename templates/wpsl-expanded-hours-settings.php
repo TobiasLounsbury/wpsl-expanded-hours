@@ -18,10 +18,14 @@
                     <div class="inside">
                         <?php settings_fields( 'wpsl_expanded_hours_option_group' ); ?>
                         <p>
+                            <label for="wpsleh_bold_today"><strong>Bold the Hours for Today:</strong></label>
+                            <input type="checkbox" id="wpsleh_bold_today" name="wpsleh_bold_today" value="1" <?php echo (get_option('wpsleh_bold_today') == 1) ? "checked" : ""; ?> />
+                        </p>
+                        <hr>
+                        <p>
                             <label for="wpsleh_enable_open_now"><strong>Enable open now search widget:</strong></label>
                             <input type="checkbox" id="wpsleh_enable_open_now" name="wpsleh_enable_open_now" value="1" <?php echo (get_option('wpsleh_enable_open_now') == 1) ? "checked" : ""; ?> />
                         </p>
-                        <hr>
                         <p>
                             <label for="wpsleh_open_now_widget_target"><strong>Where to Place the Open Now Widget:</strong></label>
                         </p>
