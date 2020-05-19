@@ -30,7 +30,25 @@
                             <label for="wpsleh_open_now_widget_target"><strong>Where to Place the Open Now Widget:</strong></label>
                         </p>
                         <p>
-                            <input type="text" id="wpsleh_open_now_widget_target" name="wpsleh_open_now_widget_target" value="<?php echo get_option('wpsleh_open_now_widget_target', '#wpsl-category'); ?>" />
+                            <input type="text" id="wpsleh_open_now_widget_target" name="wpsleh_open_now_widget_target" value="<?php echo get_option('wpsleh_open_now_widget_target', WPSLEH_DEFAULT_SETTINGS['wpsleh_open_now_widget_target']); ?>" />
+                        </p>
+                        <hr />
+                        <p>
+                            <label for="wpsleh_default_timezone"><strong>Default Timezone:</strong></label>
+                        </p>
+                        <p>
+                            <select name="wpsleh_default_timezone">
+                            <?php
+
+                            $zones = timezone_identifiers_list();
+                            $selected = get_option('wpsleh_default_timezone', WPSLEH_DEFAULT_SETTINGS['wpsleh_default_timezone']);
+                            foreach($zones as $zone) {
+                                $isSelected = ($zone == $selected) ? ' selected' : '';
+                                echo "<option value='{$zone}' {$isSelected}>{$zone}</option>\n";
+
+                            }
+                            ?>
+                            </select>
                         </p>
                         <?php  submit_button(); ?>
                     </div>

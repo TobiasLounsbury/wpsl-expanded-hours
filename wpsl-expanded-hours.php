@@ -50,6 +50,7 @@ const WPSLEH_DEFAULT_SETTINGS = [
     "wpsleh_enable_open_now"   => "1",
     "wpsleh_bold_today"   => "1",
     "wpsleh_open_now_widget_target" => '#wpsl-category',
+    "wpsleh_default_timezone" => 'America/New_York',
 ];
 
 //Register Activation/deactivation hooks
@@ -197,6 +198,8 @@ function wpsl_expanded_hours_custom_store_meta($store_meta, $store_id) {
   require_once("wpsl-expanded-hours-utils.php");
   $store_meta['expanded_hours'] = json_decode(get_post_meta($store_id, "wpsl_expanded_hours", true), true);
   $store_meta['hours'] = wpsleh_render_hours($store_meta['expanded_hours']);
+  //Set the Timezone
+  wpsleh_set_timezone($store_meta);
   $store_meta['special_hours_today'] = array_key_exists(date("Y-m-d"), $store_meta['expanded_hours']);
   return $store_meta;
 }

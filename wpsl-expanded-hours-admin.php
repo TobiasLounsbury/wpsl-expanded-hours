@@ -11,6 +11,7 @@ function wpsleh_build_expanded_hours_admin_form($args) {
   //Fetch the data
   $data = get_post_meta( $post->ID, 'wpsl_' . $args['key'], true );
 
+  wpsl_expanded_hours_export_settings();
 
   echo "<input id='wpsl-". esc_attr( $args['key'] ) ."' type='hidden' name='wpsl[". esc_attr( $args['key'] ) ."]' value='". esc_attr( $data ) ."' />";
   ?>

@@ -36,6 +36,8 @@ function wpsleh_render_hours($hours) {
 
   $output = "<table role='presentation' class='wpsl-opening-hours wpsl-expanded-hours'>";
 
+  //Set Timezone
+  wpsleh_set_timezone($hours);
   $day = strtotime(date("Y-m-d"));
   $i = 0;
   while($i < 7) {
@@ -81,6 +83,7 @@ function wpsleh_render_hours($hours) {
 function wpsleh_store_is_open($store) {
 
   try {
+
     //If we can't load the data return false;
     if (is_int($store)) {
       $store = array("expanded_hours" => json_decode(get_post_meta($store, "wpsl_expanded_hours", true), true));
@@ -94,7 +97,10 @@ function wpsleh_store_is_open($store) {
     return false;
   }
 
-  //todo: Handle timezones
+    //Set the Timezone
+    wpsleh_set_timezone($store);
+
+
   $custom = date("Y-m-d");
   $dotw = (array_key_exists($custom, $store['expanded_hours'])) ? $custom : date("w");
   $periods = $store['expanded_hours'][$dotw]['periods'];
@@ -109,6 +115,21 @@ function wpsleh_store_is_open($store) {
   }
 
   return false;
+}
+
+
+function wpsleh_set_timezone($store_meta = []) {
+    //Handle timezones: We can just set the "default" timezone based on the store data
+    $timezone = get_option("wpsleh_default_timezone", WPSLEH_DEFAULT_SETTINGS['wpsleh_default_timezone']);
+    if(array_key_exists("expanded_hours", $store_meta)) {
+        if (array_key_exists("timezone", $store_meta['expanded_hours'])) {
+            $timezone = $store_meta['expanded_hours']['timezone'];
+        }
+        if (array_key_exists("config", $store_meta['expanded_hours']) && array_key_exists("timezone", $store_meta['expanded_hours']['config'])) {
+            $timezone = $store_meta['expanded_hours']['config']['timezone'];
+        }
+    }
+    date_default_timezone_set($timezone);
 }
 
 function wpsleh_add_error($msg) {
