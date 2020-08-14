@@ -14,7 +14,7 @@ function wpsleh_convert_minutes_to_string($minutes, $format) {
   $m = $minutes % 60;
   $m = ($m == 0) ? "00" : $m;
   $h = floor( $minutes / 60);
-  $ampm = ($format == 24) ? "" : ($h > 12) ? " PM" : " AM";
+  $ampm = ($format == 24) ? "" : ($h >= 12) ? " PM" : " AM";
   $h = (($format == 12) && ($h > 12)) ? $h - 12 : $h;
   $h = (($format == 12) && ($h == 0)) ? 12 : $h;
   return "{$h}:{$m}{$ampm}";
