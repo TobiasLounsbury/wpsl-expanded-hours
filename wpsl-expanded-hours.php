@@ -201,6 +201,7 @@ function wpsl_expanded_hours_custom_store_meta($store_meta, $store_id) {
   //Set the Timezone
   wpsleh_set_timezone($store_meta);
   $store_meta['special_hours_today'] = array_key_exists(date("Y-m-d"), $store_meta['expanded_hours']);
+  $store_meta['is_currently_open'] = wpsleh_store_is_open($store_meta);
   return $store_meta;
 }
 
