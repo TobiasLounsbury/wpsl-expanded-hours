@@ -64,7 +64,8 @@ function wpsleh_render_hours($hours) {
       $output  .= "<tr class='wpsleh-special-hours-row {$today}'><td>". $hours[$date]['label'] ."</td><td>(Special Hours)</td></tr>";
     }
 
-    $day += 86400; //Add a day
+    // Add a day while also allowing for daylight savings.
+    $day = strtotime( date("Y-m-", $day) . ( intval(date("d",$day)) + 1) );
     $i++; //increment the index
   }
 
