@@ -10,7 +10,7 @@
  * Plugin Name:       Store Locator: Expanded Hours
  * Plugin URI:        https://github.com/TobiasLounsbury/wpsl-expanded-hours
  * Description:       Adds additional flexibility to open hours including searchable by "Open Now" Special Holiday flexibility and flexible display order
- * Version:           1.0.0
+ * Version:           1.0.2
  * Author:            Tobias Lounsbury
  * Author URI:        http://TobiasLounsbury.com
  * License:           GPL-2.0+
@@ -26,7 +26,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 //Define the current version number
-define( 'WPSL_EXPANDED_HOURS_VERSION', '1.0.1' );
+define( 'WPSL_EXPANDED_HOURS_VERSION', '1.0.2' );
 const WPSLEH_DAY_LOOKUP = [
     0 => "sunday",
     1 => "monday",
