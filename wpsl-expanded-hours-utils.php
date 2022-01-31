@@ -14,7 +14,7 @@ function wpsleh_convert_minutes_to_string($minutes, $format) {
   $m = $minutes % 60;
   $m = ($m == 0) ? "00" : $m;
   $h = floor( $minutes / 60);
-  $ampm = ($format == 24) ? "" : ($h >= 12) ? " PM" : " AM";
+  $ampm = ($format == 24) ? "" : (($h >= 12) ? " PM" : " AM");
   $h = (($format == 12) && ($h > 12)) ? $h - 12 : $h;
   $h = (($format == 12) && ($h == 0)) ? 12 : $h;
   return "{$h}:{$m}{$ampm}";
@@ -38,7 +38,12 @@ function wpsleh_render_hours($hours) {
 
   //Set Timezone
   wpsleh_set_timezone($hours);
-  $day = strtotime(date("Y-m-d"));
+
+  //Set time to today at noon. Because there is never more than 1 hour of defelection
+  // on daylight savings time changes and we don't care about the time component here 
+  // this should allow for simple iteration of dates while still working with time changes.
+  $day = strtotime(date("Y-m-d 12:00"));
+
   $i = 0;
   while($i < 7) {
 
@@ -64,9 +69,9 @@ function wpsleh_render_hours($hours) {
       $output  .= "<tr class='wpsleh-special-hours-row {$today}'><td>". $hours[$date]['label'] ."</td><td>(Special Hours)</td></tr>";
     }
 
-    // Add a day while also allowing for daylight savings.
-    $day = strtotime( date("Y-m-", $day) . ( intval(date("d",$day)) + 1) );
-    $i++; //increment the index
+    //Add a day worth of seconds to the timestamp.
+    $day += 86400;
+    $i++;
   }
 
   $output .= "</table>";
